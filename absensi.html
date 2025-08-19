@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Portal | Interactive Learning Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #667eea;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .section-title {
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            bottom: -8px;
+            left: 25%;
+            background-color: #667eea;
+            border-radius: 3px;
+        }
+        .event-card:hover .event-date {
+            background-color: #667eea;
+            color: white;
+        }
+        .announcement-card:hover {
+            border-left: 4px solid #667eea;
+        }
+        .max-h-90vh {
+            max-height: 90vh;
+        }
+        .max-w-90vw {
+            max-width: 90vw;
+        }
+        .gallery-item {
+            transition: transform 0.3s ease;
+        }
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Header/Navigation -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <img src="logo.png" alt="Cryptgen Logo" class="h-12">
+                    <h1 class="text-2xl font-bold">Cryptgen</h1>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#members" class="nav-link text-white hover:text-blue-200 transition">Members</a>
+                    <a href="#documentation" class="nav-link text-white hover:text-blue-200 transition">Activities</a>
+                    <a href="#announcements" class="nav-link text-white hover:text-blue-200 transition">Announcements</a>
+                    <a href="#finance" class="nav-link text-white hover:text-blue-200 transition">Finance</a>
+                    <a href="#contact" class="nav-link text-white hover:text-blue-200 transition">Contact</a>
+                </nav>
+                <button class="md:hidden text-white focus:outline-none" id="mobile-menu-button">
+                    <i class="fas fa-bars text-2xl"></i>
+                    <div id="toast" class="toast">Tersimpan</div>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-indigo-800" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#members" class="block px-3 py-2 text-white hover:bg-indigo-700 rounded-md">Members</a>
+                <a href="#documentation" class="block px-3 py-2 text-white hover:bg-indigo-700 rounded-md">Activities</a>
+                <a href="#announcements" class="block px-3 py-2 text-white hover:bg-indigo-700 rounded-md">Announcements</a>
+                <a href="#finance" class="block px-3 py-2 text-white hover:bg-indigo-700 rounded-md">Finance</a>
+                <a href="#contact" class="block px-3 py-2 text-white hover:bg-indigo-700 rounded-md">Contact</a>
+            </div>
+        </div>
+    </header>
+  <style>
+    :root{
+      --primary:#6C46A2;
+      --primary-2:#7C3AED;
+      --primary-3:#A78BFA;
+      --ink:#1F1B2D;
+      --muted:#6B7280;
+      --bg:#F8F7FF;
+      --card:#ffffff;
+      --ring:rgba(124,58,237,.35);
+      --ok:#16a34a;
+      --warn:#eab308;
+      --bad:#ef4444;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0; height:100%;}
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif; color:var(--ink); background:linear-gradient(180deg, rgba(108,70,162,.08), rgba(167,139,250,.06) 60%), var(--bg);}    
+    .topbar{position:sticky;top:0;z-index:50; backdrop-filter:saturate(140%) blur(6px); background:linear-gradient(90deg,var(--primary) 0%, var(--primary-2) 100%);} 
+    .nav{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:12px 20px;color:#fff}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.2px}
+    .brand .logo{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--primary-2),var(--primary-3));display:grid;place-items:center;color:#fff;font-size:14px;box-shadow:0 6px 18px rgba(124,58,237,.45)}
+    .nav a{color:#F5F3FF;text-decoration:none;opacity:.9}
+    .nav a.active{opacity:1;font-weight:600;border-bottom:2px solid rgba(255,255,255,.9)}
+    .nav-spacer{flex:1}
+    .hero{max-width:1100px;margin:28px auto 8px; padding:22px 20px}
+    .hero-card{background:linear-gradient(135deg, rgba(124,58,237,.16), rgba(108,70,162,.10)); border:1px solid rgba(124,58,237,.18); box-shadow:0 12px 40px rgba(108,70,162,.15); border-radius:20px; padding:28px; display:flex; align-items:center; justify-content:space-between; gap:16px}
+    .hero h1{margin:0;font-size:28px;line-height:1.2;color:#fff}
+    .hero p{margin:6px 0 0;color:#F3E8FF}
+    .hero .cta{display:flex;gap:12px;margin-top:14px}
+    .hero .badge{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--primary-2);padding:10px 14px;border-radius:999px;font-weight:600; box-shadow:0 8px 24px rgba(0,0,0,.06)}
+    .hero .bg{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,var(--primary),var(--primary-2)); border-radius:20px}
+    .hero-wrap{position:relative}
+    .container{max-width:1100px;margin:10px auto 60px;padding:0 20px;}
+    .card{background:var(--card);border:1px solid rgba(31,27,45,.06);border-radius:18px;box-shadow:0 10px 30px rgba(31,27,45,.08);padding:22px}
+    .card h2{margin:0 0 16px;font-size:20px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+    .col-6{grid-column:span 6}
+    .col-4{grid-column:span 4}
+    .col-3{grid-column:span 3}
+    .col-12{grid-column:span 12}
+    label{display:block;font-weight:600;font-size:13px;margin:2px 0 6px;color:#4b5563}
+    input[type="text"], input[type="date"], select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(31,27,45,.12); outline:none; background:#fff; box-shadow:0 1px 0 rgba(31,27,45,.02) inset; transition:box-shadow .2s,border-color .2s}
+    input:focus, select:focus{border-color:var(--primary-2); box-shadow:0 0 0 4px var(--ring)}
+    .file-input{position:relative}
+    .file-input input{opacity:0;position:absolute;inset:0;width:100%;height:100%;cursor:pointer}
+    .file-trigger{display:flex;align-items:center;justify-content:center;gap:10px;height:44px;border-radius:12px;border:1.5px dashed rgba(124,58,237,.55); background:linear-gradient(180deg,#fff, #FBF8FF); font-weight:600;color:var(--primary-2)}
+    .actions{display:flex;gap:12px;justify-content:flex-end;margin-top:10px}
+    .btn{appearance:none;border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+    .btn-primary{background:linear-gradient(90deg,var(--primary),var(--primary-2)); color:#fff; box-shadow:0 10px 24px rgba(124,58,237,.35)}
+    .btn-secondary{background:#EEF2FF;color:var(--primary-2)}
+    .table-wrap{margin-top:18px}
+    table{width:100%;border-collapse:separate;border-spacing:0 10px}
+    thead th{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;text-align:left;padding:6px 10px}
+    tbody tr{background:var(--card);box-shadow:0 4px 14px rgba(31,27,45,.06);}
+    tbody td{padding:14px 10px;border-top:1px solid rgba(31,27,45,.06);border-bottom:1px solid rgba(31,27,45,.06)}
+    tbody tr td:first-child{border-left:1px solid rgba(31,27,45,.06);border-top-left-radius:12px;border-bottom-left-radius:12px}
+    tbody tr td:last-child{border-right:1px solid rgba(31,27,45,.06);border-top-right-radius:12px;border-bottom-right-radius:12px}
+    .status{font-weight:700;padding:6px 10px;border-radius:999px;display:inline-block}
+    .status.hadir{background:rgba(22,163,74,.12);color:var(--ok)}
+    .status.izin{background:rgba(234,179,8,.12);color:var(--warn)}
+    .status.sakit{background:rgba(59,130,246,.12);color:#3b82f6}
+    .status.alfa{background:rgba(239,68,68,.12);color:var(--bad)}
+    .avatar{width:44px;height:44px;border-radius:10px;object-fit:cover;border:1px solid rgba(31,27,45,.08)}
+    footer{max-width:1100px;margin:24px auto 60px;padding:0 20px;color:#6b7280;font-size:13px}
+    @media (max-width:900px){
+      .col-6{grid-column:span 12}
+      .col-4{grid-column:span 12}
+      .col-3{grid-column:span 6}
+      .hero h1{font-size:24px}
+    }.
+    progress{position:relative;height:8px;background:#EEF2FF;border-radius:999px;overflow:hidden}
+.progress>span{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,var(--primary-3),var(--primary-2));box-shadow:0 4px 10px rgba(124,58,237,.25)}
+
+.status.terlambat{background:rgba(234,88,12,.14);color:#ea580c}
+
+.dashboard{margin-top:18px;display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.chart-card{grid-column:span 6;background:var(--card);border:1px solid rgba(31,27,45,.06);border-radius:18px;box-shadow:0 10px 30px rgba(31,27,45,.08);padding:18px}
+
+.toast{position:fixed;right:16px;bottom:16px;padding:12px 14px;background:#10b981;color:#fff;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.2);opacity:0;transform:translateY(8px);transition:.25s;z-index:60}
+
+  </style>
+</head>
+  </div>
+  <section class="hero">
+    <div class="hero-wrap">
+      <div class="bg"></div>
+      <div class="hero-card">
+        <div>
+          <h1>Absensi Kehadiran Mahasiswa</h1>
+          <p>Catat kehadiran harian dengan mudah. Simpan bukti foto untuk verifikasi.</p>
+          <div class="cta">
+            <span class="badge">✨ Modern • Terkelola • Rapi</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <main class="container">
+    <section class="card" aria-labelledby="form-title">
+      <h2 id="form-title">Form Absensi</h2>
+      <form id="absensiForm" class="grid" autocomplete="off">
+        <div class="col-6">
+          <label for="nama">Nama Mahasiswa</label>
+          <input id="nama" name="nama" type="text" placeholder="cth. Adiyansa" required />
+        </div>
+        <div class="col-3">
+          <label for="hari">Hari</label>
+          <select id="hari" name="hari" required>
+            <option value="">Pilih hari</option>
+            <option>Senin</option>
+            <option>Selasa</option>
+            <option>Rabu</option>
+            <option>Kamis</option>
+            <option>Jumat</option>
+            <option>Sabtu</option>
+            <option>Minggu</option>
+          </select>
+        </div>
+        <div class="col-3">
+          <label for="tanggal">Tanggal</label>
+          <input id="tanggal" name="tanggal" type="date" required />
+        </div>
+        <div class="col-6">
+          <label for="matakuliah">Mata Kuliah</label>
+          <select id="matakuliah" name="matakuliah" required>
+            <option value="">Pilih mata kuliah</option>
+            <option>E-Commerce (P) (2:1)</option>
+            <option>Metode Penelitian</option>
+            <option>Cloud System (Knowledge Management)</option>
+            <option>Costumer Relation Management</option>
+            <option>Transaksi Digital dan Fintech</option>
+            <option>Social Media Analysis</option>
+            <option>Pasar Modal</option>
+            <option>Business Intelligence</option>
+          </select>
+        </div>
+        <div class="col-4">
+          <label for="status">Status Kehadiran</label>
+          <select id="status" name="status" required>
+            <option value="">Pilih status</option>
+            <option value="hadir">Hadir</option>
+            <option value="izin">Izin</option>
+            <option value="sakit">Sakit</option>
+            <option value="alfa">Alfa</option>
+          </select>
+        </div>
+        <div class="col-4 file-input">
+          <label for="bukti">Upload Foto Bukti Kehadiran</label>
+          <div class="file-trigger">Klik untuk unggah foto (JPG/PNG)</div>
+          <input id="bukti" name="bukti" type="file" accept="image/*" />
+        </div>
+        <div class="col-4">
+          <label for="preview">Pratinjau</label>
+          <img id="preview" class="avatar" alt="Preview bukti" />
+        </div>
+        <div class="col-12 actions">
+          <button type="reset" class="btn btn-secondary">Reset</button>
+          <button type="submit" class="btn btn-primary">Simpan Absensi</button>
+        </div>
+      </form>
+    </section>
+    <section class="table-wrap">
+      <div class="card">
+        <h2>Rekap Hari Ini</h2>
+        <table aria-label="Tabel Absensi">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Hari</th>
+              <th>Tanggal</th>
+              <th>Mata Kuliah</th>
+              <th>Status</th>
+              <th>Bukti</th>
+            </tr>
+          </thead>
+          <tbody id="tabelBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <footer>
+    © <span id="year"></span> Cryptgen Community • Absensi
+  </footer>
+  <script>
+  const form = document.getElementById('absensiForm');
+  const preview = document.getElementById('preview');
+  const bukti = document.getElementById('bukti');
+  const tbody = document.getElementById('tabelBody');
+
+  /**************************
+ * CONFIG
+ **************************/
+const SHEET_NAME = 'Absensi';
+const FOLDER_ID  = ''; // opsional: isi folder Drive untuk menyimpan foto; biarkan '' jika tidak dipakai
+const TIMEZONE   = 'Asia/Makassar';
+
+/**************************
+ * ROUTER
+ **************************/
+function doGet(e) {
+  enableCORS();
+  const action = (e.parameter.action || '').toLowerCase();
+
+  if (action === 'stats') {
+    const stats = buildStats_();
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok:true, data: stats }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // default: ping
+  return ContentService
+    .createTextOutput(JSON.stringify({ ok:true, message: 'GAS up' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  enableCORS();
+  try {
+    const ct = e.postData ? e.postData.type : '';
+    let payload = {};
+
+    if (ct === 'application/json') {
+      payload = JSON.parse(e.postData.contents);
+    } else {
+      // FormData (multipart/form-data)
+      const params = e.parameter;
+      payload = Object.assign({}, params);
+    }
+
+    const { nama, hari, tanggal, matakuliah, jam, status } = payload;
+
+    // simpan foto jika ada base64
+    let fotoURL = payload.fotoBase64 || payload.foto || '';
+    if (fotoURL && fotoURL.startsWith('data:') && FOLDER_ID) {
+      fotoURL = saveBase64ToDrive_(fotoURL);
+    } else if (fotoURL && fotoURL.startsWith('data:') && !FOLDER_ID) {
+      // jika tidak pakai Drive, kosongkan saja agar tidak membebani sheet
+      fotoURL = '';
+    }
+
+    const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+    if (!sheet) throw new Error('Sheet not found: ' + SHEET_NAME);
+
+    // normalisasi tanggal (string → Date)
+    const d = tanggal ? new Date(tanggal) : new Date();
+    const tz = Session.getScriptTimeZone() || TIMEZONE;
+    const dateStr = Utilities.formatDate(d, tz, 'yyyy-MM-dd');
+
+    sheet.appendRow([
+      nama || '',
+      hari || '',
+      dateStr,
+      matakuliah || '',
+      jam || '',
+      (status || '').toLowerCase(),
+      fotoURL || ''
+    ]);
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok:true }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok:false, error: String(err) }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**************************
+ * HELPERS
+ **************************/
+function enableCORS() {
+  const res = HtmlService.createHtmlOutput('');
+  const h = res.getContent();
+  return ContentService.createTextOutput(h)
+    .setMimeType(ContentService.MimeType.HTML);
+}
+
+// Simpan gambar base64 ke Drive → kembalikan link
+function saveBase64ToDrive_(dataUrl) {
+  const match = dataUrl.match(/^data:(.+);base64,(.*)$/);
+  if (!match) return '';
+  const mime = match[1];
+  const bytes = Utilities.base64Decode(match[2]);
+  const blob = Utilities.newBlob(bytes, mime, 'bukti-'+Date.now());
+  const folder = DriveApp.getFolderById(FOLDER_ID);
+  const file = folder.createFile(blob);
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return file.getUrl();
+}
+
+// Bangun statistik dari Sheet
+function buildStats_() {
+  const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_NAME);
+  const range = sheet.getDataRange().getValues();
+  const header = range[0];
+  const rows = range.slice(1);
+
+  const idx = {
+    nama: header.indexOf('Nama'),
+    hari: header.indexOf('Hari'),
+    tanggal: header.indexOf('Tanggal'),
+    mk: header.indexOf('Mata Kuliah'),
+    jam: header.indexOf('Jam'),
+    status: header.indexOf('Status'),
+    foto: header.indexOf('FotoURL'),
+  };
+
+  // hitung
+  const statusCounts = { hadir:0, izin:0, sakit:0, alfa:0, terlambat:0 };
+  const byStudent = {};   // { nama: { hadir, total } }
+  const byCourse  = {};   // { mk:   { hadir, total } }
+
+  rows.forEach(r => {
+    const nama = (r[idx.nama] || '').toString().trim();
+    const mk   = (r[idx.mk]   || '').toString().trim();
+    const st   = (r[idx.status] || '').toString().toLowerCase().trim();
+
+    if (st) statusCounts[st] = (statusCounts[st]||0) + 1;
+
+    // definisi: 'terlambat' TIDAK dihitung hadir. Ubah logika sesuai kebijakan.
+    byStudent[nama] = byStudent[nama] || { hadir:0, total:0 };
+    byStudent[nama].total++;
+    if (st === 'hadir') byStudent[nama].hadir++;
+
+    byCourse[mk] = byCourse[mk] || { hadir:0, total:0 };
+    byCourse[mk].total++;
+    if (st === 'hadir') byCourse[mk].hadir++;
+  });
+
+  const perStudentPercent = Object.keys(byStudent).map(n => ({
+    nama: n,
+    percent: byStudent[n].total ? Math.round(100 * byStudent[n].hadir / byStudent[n].total) : 0
+  }));
+
+  const perCoursePercent = Object.keys(byCourse).map(mk => ({
+    mk,
+    percent: byCourse[mk].total ? Math.round(100 * byCourse[mk].hadir / byCourse[mk].total) : 0
+  }));
+
+  const totals = Object.values(byStudent).reduce((a,b)=>({hadir:a.hadir+b.hadir,total:a.total+b.total}), {hadir:0,total:0});
+  const overallAttendance = totals.total ? Math.round(100 * totals.hadir / totals.total) : 0;
+
+  return {
+    statusCounts,
+    perStudentPercent,
+    perCoursePercent,
+    overallAttendance
+  };
+}
+
+  // Tampilkan tahun
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Preview foto
+  bukti.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    if (!file) { preview.src = ''; return; }
+    const reader = new FileReader();
+    reader.onload = () => preview.src = reader.result;
+    reader.readAsDataURL(file);
+  });
+
+  // Tambah baris ke tabel
+  function addRow({ nama, hari, tanggal, status, foto }) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${nama}</strong></td>
+      <td>${hari}</td>
+      <td>${new Date(tanggal).toLocaleDateString('id-ID')}</td>
+      <td><span class="status ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
+      <td>${foto ? `<img class="avatar" src="${foto}" alt="Bukti">` : '-'}</td>
+    `;
+    tbody.prepend(tr);
+  }
+
+  // Submit ke Google Spreadsheet
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+
+    const nama = formData.get('nama');
+    const hari = formData.get('hari');
+    const tanggal = formData.get('tanggal');
+    const status = formData.get('status');
+
+    let foto = '';
+    const file = bukti.files?.[0];
+    if (file) {
+      foto = await new Promise((res) => {
+        const r = new FileReader();
+        r.onload = () => res(r.result);
+        r.readAsDataURL(file);
+      });
+    }
+
+    // Kirim ke Apps Script
+    fetch(SCRIPT_URL, { method: 'POST', body: formData })
+      .then((res) => res.text())
+      .then((text) => {
+        alert("Absensi tersimpan di Spreadsheet!");
+        addRow({ nama, hari, tanggal, status, foto });
+        form.reset();
+        preview.src = '';
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("❌ Gagal menyimpan, coba lagi!");
+      });
+  });
+
+    const form = document.getElementById('absensiForm');
+    const preview = document.getElementById('preview');
+    const bukti = document.getElementById('bukti');
+    const tbody = document.getElementById('tabelBody');
+    document.getElementById('year').textContent = new Date().getFullYear();
+    bukti.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if(!file) { preview.src = ''; return; }
+      const reader = new FileReader();
+      reader.onload = () => preview.src = reader.result;
+      reader.readAsDataURL(file);
+    });
+    function addRow({nama, hari, tanggal, matakuliah, status, foto}){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${nama}</strong></td>
+        <td>${hari}</td>
+        <td>${new Date(tanggal).toLocaleDateString('id-ID')}</td>
+        <td>${matakuliah}</td>
+        <td><span class="status ${status}">${status.charAt(0).toUpperCase()+status.slice(1)}</span></td>
+        <td>${foto ? `<img class="avatar" src="${foto}" alt="Bukti">` : '-'}</td>
+      `;
+      tbody.prepend(tr);
+      function isDuplicate(nama, tanggal, mk){
+  return [...tbody.querySelectorAll('tr')].some(tr=>{
+    return tr.dataset.nama===nama && tr.dataset.tanggal===tanggal && tr.dataset.mk===mk;
+  });
+}
+// ketika submit:
+if(isDuplicate(data.nama, data.tanggal, data.matakuliah)){
+  alert("Data sudah ada untuk mahasiswa/ MK/ tanggal tersebut.");
+  return;
+}
+
+    }
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const nama = formData.get('nama');
+      const hari = formData.get('hari');
+      const tanggal = formData.get('tanggal');
+      const matakuliah = formData.get('matakuliah');
+      const status = formData.get('status');
+      let foto = '';
+      const file = bukti.files?.[0];
+      if(file){
+        foto = await new Promise((res)=>{const r = new FileReader(); r.onload = ()=>res(r.result); r.readAsDataURL(file);});
+      }
+      addRow({nama, hari, tanggal, matakuliah, status, foto});
+      form.reset();
+      preview.src = '';
+    });
+  </script>
+</body>
+</html>
