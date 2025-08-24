@@ -112,6 +112,8 @@
   <div class="nav__in">
     <div class="logo" aria-hidden="true"></div>
     <div class="brand">Cryptgen</div>
+    <a id="openSheet" class="link" href="#" target="_blank" rel="noopener" style="margin-left:12px;font-size:12px;color:#6F61C0;text-decoration:underline">Buka spreadsheet</a>
+
     <div style="margin-left:auto">
       <button id="toggleDrawer" class="iconbtn" aria-label="Buka/tutup filter">☰</button>
     </div>
@@ -308,246 +310,50 @@ async function updateSheet(id, doneStatus) {
 }
 
   function mapRowToTask(row){
-    return {
-      id: String(row.id || ''),
-      title: row.title || '',
-      course: row.course || '',
-      due: (row.due || '').slice(0,10), // sarankan YYYY-MM-DD
-      time: row.time || '',
-      description: row.description || '',
-      done: String(row.done).toLowerCase()==='true' || row.done==='1'
-    };
-  }
-
-  async function loadTasksFromCSV(){
-    try{
-      const res = await fetch(CSV_URL, {cache:'no-store'});
-      if(!res.ok) throw new Error('Fetch CSV gagal');
-      const text = await res.text();
-      tasks = parseCSV(text).map(mapRowToTask);
-
-      // sinkron status done lokal
-      const doneState = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
-      tasks.forEach(t => t.done = doneState[t.id] ?? t.done);
-
-      initFilters(); // isi dropdown course
-      render();
-    }catch(err){
-      console.error(err);
-      document.getElementById('list').innerHTML =
-        '<div class="card">Gagal memuat data dari CSV. Periksa URL atau izin publikasi.</div>';
+  const pick = (...names) => {
+    for (const n of names){
+      if (row[n] != null && String(row[n]).trim() !== '') return row[n];
+      const low = (n && n.toLowerCase) ? n.toLowerCase() : n;
+      if (row[low] != null && String(row[low]).trim() !== '') return row[low];
     }
-  }
+    return '';
+  };
+  const id = pick('id','ID','Id','no','No','NO');
+  const title = pick('title','Title','judul','Judul','tugas','Tugas','nama_tugas','Nama Tugas');
+  const course = pick('course','Course','mata_kuliah','Mata Kuliah','matakuliah','Mapel','mapel');
+  const due = pick('due','Due','tanggal','Tanggal','deadline','Deadline','jatuh_tempo','Jatuh Tempo');
+  const time = pick('time','Time','waktu','Waktu','jam','Jam');
+  const description = pick('description','Description','deskripsi','Deskripsi','keterangan','Keterangan','catatan','Catatan');
+  const doneRaw = pick('done','Done','status','Status','selesai','Selesai','is_done','Is Done');
 
-  /* ================== UTIL & UI ================== */
-  const listEl = document.getElementById('list');
-  const qEl = document.getElementById('q');
-  const fCourse = document.getElementById('fCourse');
-  const fDue = document.getElementById('fDue');
-  const fStatus = document.getElementById('fStatus');
-  const sumEl = document.getElementById('sum');
-  const drawer = document.getElementById('drawer');
-  const drawerBtn = document.getElementById('drawerBtn');
-  const toggleDrawer = document.getElementById('toggleDrawer');
-
-  // Stats
-  const progressText = document.getElementById('progressText');
-  const progressBar = document.getElementById('progressBar');
-  const pieChart  = document.getElementById('pieChart');
-  const pieLabel  = document.getElementById('pieLabel');
-
-  // Calendar
-  const calGrid = document.getElementById('calGrid');
-  const calLabel = document.getElementById('calLabel');
-
-  let sortAsc = true;
-  let selectedDate = null; // YYYY-MM-DD filter via kalender
-  const today = new Date().toISOString().slice(0,10);
-
-  const daysBetween=(a,b)=>Math.round((new Date(b+'T00:00')-new Date(a+'T00:00'))/86400000);
-  const ddmmyyyy = x => { const [y,m,d]=x.split('-'); return `${d}/${m}/${y}`; };
-
-  function initFilters(){
-    fCourse.innerHTML = '<option value="all">Semua</option>';
-    [...new Set(tasks.map(t=>t.course).filter(Boolean))].sort().forEach(c=>{
-      const o=document.createElement('option'); o.value=c; o.textContent=c; fCourse.appendChild(o);
-    });
-  }
-
-  function setDrawer(open){
-    drawer.dataset.open = open ? "true" : "false";
-    drawerBtn.textContent = open ? "Tutup" : "Buka";
-    drawerBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  }
-  drawerBtn.addEventListener('click', ()=> setDrawer(drawer.dataset.open!=="true"));
-  toggleDrawer.addEventListener('click', ()=> setDrawer(drawer.dataset.open!=="true"));
-
-  function matches(t){
-    if(selectedDate && t.due !== selectedDate) return false;
-    if(fCourse.value!=='all' && t.course!==fCourse.value) return false;
-    const diff=daysBetween(today,t.due);
-    if(fDue.value==='today'  && diff!==0) return false;
-    if(fDue.value==='week'   && !(diff>=0 && diff<=7)) return false;
-    if(fDue.value==='month'  && !(diff>=0 && diff<=30)) return false;
-    if(fDue.value==='overdue'&& !(diff<0 && !t.done)) return false;
-    if(fStatus.value==='open'&&  t.done) return false;
-    if(fStatus.value==='done'&& !t.done) return false;
-    const q=qEl.value.trim().toLowerCase();
-    if(q && !(t.title+' '+t.description+' '+t.course).toLowerCase().includes(q)) return false;
-    return true;
-  }
-
-  function updateStats(visible){
-    const total = tasks.length;
-    const done = tasks.filter(t=>t.done).length;
-    const pct = total ? Math.round((done/total)*100) : 0;
-
-    // progress
-    progressText.textContent = `${done}/${total} selesai`;
-    progressBar.style.width = pct + '%';
-
-    // donut chart via conic-gradient
-    const donePct = total ? (done/total)*100 : 0;
-    pieChart.style.background = `conic-gradient(#0f9d76 0% ${donePct}%, #5b46b9 ${donePct}% 100%)`;
-    pieLabel.textContent = `${done}/${total}`;
-
-    // ringkasan bawah
-    const shown = visible.length;
-    sumEl.children[0].textContent = `${shown}/${total} tugas tampil${selectedDate?` (tgl ${ddmmyyyy(selectedDate)})`:''}`;
-    sumEl.children[1].textContent = `${done} selesai`;
-  }
-
-  function render(){
-    tasks.sort((a,b)=>{
-      const da=new Date(a.due+'T'+(a.time||'00:00'));
-      const db=new Date(b.due+'T'+(b.time||'00:00'));
-      return sortAsc? (da-db):(db-da);
-    });
-
-    listEl.innerHTML='';
-    const visible=tasks.filter(matches);
-
-    visible.forEach(t=>{
-      const card=document.createElement('article'); card.className='task'+(t.done?' done':'');
-      const top=document.createElement('div'); top.className='task__top';
-
-      const check=document.createElement('button'); check.className='check'+(t.done?' done':''); check.setAttribute('aria-label','Tandai selesai');
-      check.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M20.285 2L9 13.285 3.714 8 2 9.714l7 7L22 3.715z"/></svg>`;
-      check.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        t.done=!t.done;
-        const state = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
-        state[t.id]=t.done;
-        localStorage.setItem(LS_KEY, JSON.stringify(state));
-        updateSheet(t.id, t.done);
-        render();
-      });
-
-      const title=document.createElement('div'); title.className='title'; title.textContent=t.title||'(Tanpa judul)';
-
-      const badges=document.createElement('div'); badges.className='badges';
-      badges.innerHTML=`
-        <span class="badge-status">${t.course||'-'}</span>
-        <span class="badge-status">🗓 ${t.due?ddmmyyyy(t.due):'-'} ${t.time?('• '+t.time):''}</span>
-        <span class="badge-status ${t.done?'done':''}">${t.done?'Selesai':'Belum'}</span>
-      `;
-
-      top.append(check,title,badges);
-
-      const detail=document.createElement('div'); detail.className='detail';
-      const r=isNaN(new Date(t.due))? null : Math.round((new Date(t.due)-new Date(today))/86400000);
-      const badge = (r===null) ? '' : (r<0 ? '❗Terlambat' : r===0 ? '⏰ Hari ini' : `⏳ ${r} hari lagi`);
-      detail.innerHTML=`<div style="margin-bottom:6px;font-weight:800;color:#6F61C0">${badge}</div>${t.description||''}`;
-      top.addEventListener('click', ()=> card.classList.toggle('expanded'));
-
-      card.append(top,detail);
-      listEl.appendChild(card);
-    });
-
-    updateStats(visible);
-    renderCalendar(); // refresh badge jumlah per hari & seleksi
-  }
-
-  /* ===== Calendar ===== */
-  let calMonth = new Date(); // bulan yang ditampilkan
-  calMonth.setDate(1);
-
-  function monthLabel(d){
-    return d.toLocaleDateString('id-ID',{month:'long', year:'numeric'});
-  }
-  function daysInMonth(d){
-    const y=d.getFullYear(), m=d.getMonth();
-    return new Date(y, m+1, 0).getDate();
-  }
-
-  function renderCalendar(){
-    const dow = ['M','S','S','R','K','J','S']; // Senin-awal
-    calGrid.innerHTML='';
-    dow.forEach(ch=>{
-      const h=document.createElement('div'); h.className='dow'; h.textContent=ch; calGrid.appendChild(h);
-    });
-
-    const y=calMonth.getFullYear(), m=calMonth.getMonth();
-    calLabel.textContent = monthLabel(calMonth);
-
-    const first = new Date(y,m,1);
-    let startIdx = (first.getDay()+6)%7; // 0=Senin
-    const total = daysInMonth(calMonth);
-
-    // hitung jumlah tugas per hari (bulan aktif)
-    const map = {};
-    tasks.forEach(t=>{
-      const dt=new Date(t.due);
-      if(!isNaN(dt) && dt.getMonth()===m && dt.getFullYear()===y){
-        const day=dt.getDate();
-        map[day]=(map[day]||0)+1;
-      }
-    });
-
-    for(let i=0;i<startIdx;i++){
-      const cell=document.createElement('div'); cell.className='day mute'; calGrid.appendChild(cell);
-    }
-
-    for(let d=1; d<=total; d++){
-      const cell=document.createElement('button'); cell.className='day';
-      const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      cell.textContent=d;
-      if(map[d]){ const b=document.createElement('span'); b.className='badge'; b.textContent=map[d]; cell.appendChild(b); }
-      if(selectedDate===dateStr) cell.classList.add('selected');
-
-      cell.addEventListener('click', ()=>{
-        selectedDate = (selectedDate===dateStr) ? null : dateStr;
-        render(); // akan memanggil renderCalendar lagi dan mewarnai seleksi
-      });
-
-      calGrid.appendChild(cell);
-    }
-  }
-
-  /* ===== Events ===== */
-  document.getElementById('reset').addEventListener('click', ()=>{
-    qEl.value=''; fCourse.value='all'; fDue.value='all'; fStatus.value='all'; selectedDate=null; render();
-  });
-  document.getElementById('sort').addEventListener('click', ()=>{ sortAsc=!sortAsc; render(); });
-  [fCourse,fDue,fStatus].forEach(el=>el.addEventListener('change', render));
-  let tmr=null; qEl.addEventListener('input', ()=>{ clearTimeout(tmr); tmr=setTimeout(render,180); });
-
-  // Init
-  const mq = window.matchMedia('(min-width:600px)');
-  const autoDrawer = e => setDrawer(e.matches);
-  autoDrawer(mq); mq.addEventListener?.('change', autoDrawer);
-
-  // Mulai load CSV saat halaman siap
-  document.addEventListener('DOMContentLoaded', loadTasksFromCSV);
-</script>
-
-<script>
-
-function normalizeMultiline(s){ return (s || '').replace(/\r\n/g,'\n'); }
-function escapeHTML(s){
-  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return {
+    id: String(id || ''),
+    title: title || '',
+    course: course || '',
+    due: (due || '').slice(0,10),
+    time: time || '',
+    description: description || '',
+    done: /^(true|1|selesai|done|ya|yes)$/i.test(String(doneRaw || '').trim())
+  };
 }
 
 </script>
+
+<script>
+  (function(){
+    try{
+      if(typeof CSV_URL==='string'){
+        var u = new URL(CSV_URL);
+        var link = u.origin + u.pathname;
+        // Try to convert published CSV URL to spreadsheet base (strip query)
+        var a = document.getElementById('openSheet');
+        if(a){
+          a.href = link;
+        }
+      }
+    }catch(e){}
+  })();
+</script>
+
 </body>
 </html>
