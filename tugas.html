@@ -224,21 +224,66 @@
 
   /* ================== CSV LOADER ================== */
   function parseCSV(text) {
-  // Fungsi untuk menghapus tanda kutip di awal dan akhir string
-  const clean = (str) => (str || '').trim().replace(/^"|"$/g, '');
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let i = 0, inQuotes = false;
 
-  const rows = text.split(/\r?\n/).filter(r => r.trim() !== '');
-  if (rows.length === 0) return []; // Kembalikan array kosong jika tidak ada baris
+  while (i < text.length) {
+    const ch = text[i];
+    const next = text[i + 1];
 
-  const head = rows.shift().split(',').map(clean);
+    if (inQuotes) {
+      if (ch === '"' && next === '"') { // escaped quote ""
+        cell += '"';
+        i += 2;
+        continue;
+      }
+      if (ch === '"') { // end quote
+        inQuotes = false;
+        i++;
+        continue;
+      }
+      cell += ch; // normal char inside quotes (includes 
+)
+      i++;
+    } else {
+      if (ch === '"') {
+        inQuotes = true;
+        i++;
+      } else if (ch === ',') {
+        row.push(cell);
+        cell = '';
+        i++;
+      } else if (ch === '
+') {
+        i++;
+      } else if (ch === '
+') {
+        row.push(cell);
+        rows.push(row);
+        row = [];
+        cell = '';
+        i++;
+      } else {
+        cell += ch;
+        i++;
+      }
+    }
+  }
+  // push last cell/row
+  row.push(cell);
+  rows.push(row);
 
-  return rows.map(r => {
-    // Parser ini masih simpel, belum bisa menangani koma di dalam deskripsi
-    const cols = r.split(',').map(clean);
-    const obj = {};
-    head.forEach((h, i) => obj[h] = cols[i]);
-    return obj;
-  });
+  // header
+  const head = rows.shift().map(h => (h || '').trim());
+  return rows
+    .filter(r => r.some(x => (x || '').trim() != ''))
+    .map(cols => {
+      const obj = {};
+      head.forEach((h, idx) => (obj[h] = (cols[idx] ?? '').strip ? (cols[idx] ?? '').strip() : (cols[idx] ?? '').trim()));
+      return obj;
+    });
 }
 async function updateSheet(id, doneStatus) {
   // Jangan lakukan apa-apa jika URL script tidak diatur
@@ -494,6 +539,15 @@ async function updateSheet(id, doneStatus) {
 
   // Mulai load CSV saat halaman siap
   document.addEventListener('DOMContentLoaded', loadTasksFromCSV);
+</script>
+
+<script>
+
+function normalizeMultiline(s){ return (s || '').replace(/\r\n/g,'\n'); }
+function escapeHTML(s){
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
 </script>
 </body>
 </html>
