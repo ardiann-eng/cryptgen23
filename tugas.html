@@ -1,499 +1,1003 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Tugas Kuliah • Cryptgen (CSV)</title>
-<style>
-  :root{
-    --p700:#6E50A8; --p600:#6F61C0; --p500:#6F7BDD;
-    --p200:#EAE3FF; --p100:#F6F3FF;
-    --text:#1F2330; --muted:#76819B; --border:#ECECF6; --white:#fff;
-    --r:18px; --shadow:0 16px 40px rgba(36,24,77,.10);
-    --fs-sm:clamp(12px,3vw,14px);
-    --fs-md:clamp(14px,3.4vw,16px);
-    --fs-lg:clamp(16px,4vw,20px);
-    --gap:clamp(8px,2.8vw,12px);
-    --pad:clamp(10px,3.2vw,14px);
-    --tap:44px;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:var(--p100);color:var(--text);
-    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-    font-size:var(--fs-md);line-height:1.4}
-  a{text-decoration:none;color:inherit}
-  button{border:none;background:none;cursor:pointer;font:inherit}
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tugas Kuliah • Cryptgen (CSV)</title>
+    <style>
+      :root {
+        --p700: #6e50a8;
+        --p600: #6f61c0;
+        --p500: #6f7bdd;
+        --p200: #eae3ff;
+        --p100: #f6f3ff;
+        --text: #1f2330;
+        --muted: #76819b;
+        --border: #ececf6;
+        --white: #fff;
+        --r: 18px;
+        --shadow: 0 16px 40px rgba(36, 24, 77, 0.1);
+        --fs-sm: clamp(12px, 3vw, 14px);
+        --fs-md: clamp(14px, 3.4vw, 16px);
+        --fs-lg: clamp(16px, 4vw, 20px);
+        --gap: clamp(8px, 2.8vw, 12px);
+        --pad: clamp(10px, 3.2vw, 14px);
+        --tap: 44px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--p100);
+        color: var(--text);
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial;
+        font-size: var(--fs-md);
+        line-height: 1.4;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      button {
+        border: none;
+        background: none;
+        cursor: pointer;
+        font: inherit;
+      }
 
-  .nav{position:sticky;top:0;z-index:50;color:#fff;
-       background:linear-gradient(90deg,var(--p700),var(--p500));box-shadow:var(--shadow)}
-  .nav__in{max-width:1100px;margin:auto;display:flex;align-items:center;gap:10px;padding:10px var(--pad)}
-  .logo{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.25)}
-  .brand{font-weight:800}
-  .iconbtn{height:var(--tap);min-width:var(--tap);display:grid;place-items:center;padding:0 8px;border-radius:12px;background:rgba(255,255,255,.12)}
-  .hero{padding:14px var(--pad) 6px;background:linear-gradient(180deg,rgba(111,123,221,.08),transparent)}
-  h1{font-size:var(--fs-lg);margin:0 0 4px}
-  .sub{color:var(--muted);font-size:var(--fs-sm)}
-  .container{max-width:1100px;margin:auto;padding:0 var(--pad) var(--pad)}
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        color: #fff;
+        background: linear-gradient(90deg, var(--p700), var(--p500));
+        box-shadow: var(--shadow);
+      }
+      .nav__in {
+        max-width: 1100px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px var(--pad);
+      }
+      .logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.25);
+      }
+      .brand {
+        font-weight: 800;
+      }
+      .iconbtn {
+        height: var(--tap);
+        min-width: var(--tap);
+        display: grid;
+        place-items: center;
+        padding: 0 8px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.12);
+      }
+      .hero {
+        padding: 14px var(--pad) 6px;
+        background: linear-gradient(
+          180deg,
+          rgba(111, 123, 221, 0.08),
+          transparent
+        );
+      }
+      h1 {
+        font-size: var(--fs-lg);
+        margin: 0 0 4px;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: var(--fs-sm);
+      }
+      .container {
+        max-width: 1100px;
+        margin: auto;
+        padding: 0 var(--pad) var(--pad);
+      }
 
-  /* Drawer filter */
-  .drawer{background:var(--white);border:1px solid var(--border);border-radius:calc(var(--r) + 2px);box-shadow:var(--shadow);overflow:hidden;margin-top:var(--gap)}
-  .drawer__head{display:flex;align-items:center;justify-content:space-between;padding:8px var(--pad)}
-  .drawer__title{font-weight:800}
-  .drawer__toggle{height:var(--tap);padding:0 12px;border-radius:12px;background:var(--p200);color:#3A2D6D;font-weight:800}
-  .drawer__body{display:grid;grid-template-columns:1fr;gap:var(--gap);padding:var(--pad);border-top:1px dashed var(--border)}
-  .field{display:flex;flex-direction:column;gap:6px}
-  .label{font-size:var(--fs-sm);color:var(--muted)}
-  .input,.select{height:var(--tap);padding:0 12px;border-radius:14px;background:var(--white);border:1px solid var(--border);outline:none;transition:.2s}
-  .input:focus,.select:focus{border-color:var(--p500);box-shadow:0 0 0 3px rgba(111,123,221,.18)}
-  .drawer__actions{display:flex;gap:8px;flex-wrap:wrap}
-  .btn{min-height:var(--tap);padding:0 14px;border-radius:14px;font-weight:800;display:inline-flex;align-items:center;gap:8px;box-shadow:var(--shadow)}
-  .btn-primary{color:#fff;background:linear-gradient(90deg,var(--p700),var(--p500))}
-  .btn-ghost{background:var(--white);border:1px solid var(--p500);color:var(--p700)}
-  .drawer[data-open="false"] .drawer__body{display:none}
+      /* Drawer filter */
+      .drawer {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: calc(var(--r) + 2px);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        margin-top: var(--gap);
+      }
+      .drawer__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px var(--pad);
+      }
+      .drawer__title {
+        font-weight: 800;
+      }
+      .drawer__toggle {
+        height: var(--tap);
+        padding: 0 12px;
+        border-radius: 12px;
+        background: var(--p200);
+        color: #3a2d6d;
+        font-weight: 800;
+      }
+      .drawer__body {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--gap);
+        padding: var(--pad);
+        border-top: 1px dashed var(--border);
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .label {
+        font-size: var(--fs-sm);
+        color: var(--muted);
+      }
+      .input,
+      .select {
+        height: var(--tap);
+        padding: 0 12px;
+        border-radius: 14px;
+        background: var(--white);
+        border: 1px solid var(--border);
+        outline: none;
+        transition: 0.2s;
+      }
+      .input:focus,
+      .select:focus {
+        border-color: var(--p500);
+        box-shadow: 0 0 0 3px rgba(111, 123, 221, 0.18);
+      }
+      .drawer__actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        min-height: var(--tap);
+        padding: 0 14px;
+        border-radius: 14px;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: var(--shadow);
+      }
+      .btn-primary {
+        color: #fff;
+        background: linear-gradient(90deg, var(--p700), var(--p500));
+      }
+      .btn-ghost {
+        background: var(--white);
+        border: 1px solid var(--p500);
+        color: var(--p700);
+      }
+      .drawer[data-open="false"] .drawer__body {
+        display: none;
+      }
 
-  /* Kartu statistik */
-  .stats{display:grid;grid-template-columns:1fr;gap:var(--gap);margin-top:var(--gap)}
-  .card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:var(--pad)}
-  .stat-row{display:flex;align-items:center;gap:12px}
-  .progress{width:100%;height:12px;background:#EEE9FF;border-radius:999px;overflow:hidden}
-  .progress > span{display:block;height:100%;background:linear-gradient(90deg,var(--p700),var(--p500));width:0%}
-  .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:var(--fs-sm);color:var(--muted)}
-  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
-  .c-done{background:#0f9d76}.c-open{background:#5b46b9}
+      /* Kartu statistik */
+      .stats {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--gap);
+        margin-top: var(--gap);
+      }
+      .card {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        box-shadow: var(--shadow);
+        padding: var(--pad);
+      }
+      .stat-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .progress {
+        width: 100%;
+        height: 12px;
+        background: #eee9ff;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .progress > span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--p700), var(--p500));
+        width: 0%;
+      }
+      .legend {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+        font-size: var(--fs-sm);
+        color: var(--muted);
+      }
+      .dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 6px;
+      }
+      .c-done {
+        background: #0f9d76;
+      }
+      .c-open {
+        background: #5b46b9;
+      }
 
-  /* Pie chart baru (donut conic-gradient) */
-  .pie-wrap{display:flex;align-items:center;gap:12px}
-  .pie{position:relative;width:72px;height:72px;border-radius:50%;
-       background:conic-gradient(#5b46b9 0% 100%);
-       box-shadow:0 6px 14px rgba(36,24,77,.08)}
-  .pie::after{content:"";position:absolute;inset:9px;background:#fff;border-radius:50%}
-  .pie-label{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:12px;color:#1F2330}
-  .stat-title{font-weight:800;margin-bottom:6px}
+      /* Pie chart baru (donut conic-gradient) */
+      .pie-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .pie {
+        position: relative;
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: conic-gradient(#5b46b9 0% 100%);
+        box-shadow: 0 6px 14px rgba(36, 24, 77, 0.08);
+      }
+      .pie::after {
+        content: "";
+        position: absolute;
+        inset: 9px;
+        background: #fff;
+        border-radius: 50%;
+      }
+      .pie-label {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        font-size: 12px;
+        color: #1f2330;
+      }
+      .stat-title {
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
 
-  /* Kalender mini */
-  .cal{display:grid;gap:6px}
-  .cal-head{display:flex;align-items:center;justify-content:space-between}
-  .cal-nav{display:flex;gap:6px}
-  .cal-btn{height:34px;padding:0 10px;border-radius:10px;background:var(--p200);color:#3A2D6D;font-weight:800}
-  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-  .dow,.day{background:var(--white);border:1px solid var(--border);border-radius:10px;text-align:center;padding:6px}
-  .dow{font-size:11px;color:var(--muted);background:transparent;border:none}
-  .day{position:relative;min-height:40px}
-  .day.mute{opacity:.45}
-  .badge{position:absolute;bottom:6px;right:6px;background:linear-gradient(90deg,var(--p700),var(--p500));color:#fff;border-radius:999px;font-size:10px;padding:2px 6px}
-  .day.selected{outline:3px solid rgba(111,123,221,.35)}
-  .cal-note{font-size:var(--fs-sm);color:var(--muted)}
+      /* Kalender mini */
+      .cal {
+        display: grid;
+        gap: 6px;
+      }
+      .cal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .cal-nav {
+        display: flex;
+        gap: 6px;
+      }
+      .cal-btn {
+        height: 34px;
+        padding: 0 10px;
+        border-radius: 10px;
+        background: var(--p200);
+        color: #3a2d6d;
+        font-weight: 800;
+      }
+      .cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+      }
+      .dow,
+      .day {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        text-align: center;
+        padding: 6px;
+      }
+      .dow {
+        font-size: 11px;
+        color: var(--muted);
+        background: transparent;
+        border: none;
+      }
+      .day {
+        position: relative;
+        min-height: 40px;
+      }
+      .day.mute {
+        opacity: 0.45;
+      }
+      .badge {
+        position: absolute;
+        bottom: 6px;
+        right: 6px;
+        background: linear-gradient(90deg, var(--p700), var(--p500));
+        color: #fff;
+        border-radius: 999px;
+        font-size: 10px;
+        padding: 2px 6px;
+      }
+      .day.selected {
+        outline: 3px solid rgba(111, 123, 221, 0.35);
+      }
+      .cal-note {
+        font-size: var(--fs-sm);
+        color: var(--muted);
+      }
 
-  /* List tugas */
-  .list{display:flex;flex-direction:column;gap:10px;margin-top:var(--gap)}
-  .task{background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:0 8px 26px rgba(36,24,77,.08);overflow:hidden}
-  .task__top{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px}
-  .check{width:26px;height:26px;border-radius:10px;border:2px solid var(--p600);display:grid;place-items:center;background:#fff}
-  .check svg{opacity:0;transition:opacity .12s}
-  .check.done{background:var(--p600)} .check.done svg{opacity:1}
-  .title{font-weight:800}
-  .badges{display:flex;gap:6px;flex-wrap:wrap;justify-self:end}
-  .badge-status{padding:6px 10px;border-radius:999px;background:var(--p200);border:1px solid #ddd3ff;color:#3A2D6D;font-size:12px;font-weight:800}
-  .badge-status.done{background:#e6fbf5;border-color:#bff0e4;color:#0f9d76}
-  .detail{display:none;border-top:1px dashed var(--border);padding:10px;color:var(--muted)}
-  .task.expanded .detail{display:block}
-  .task.done .title{text-decoration:line-through;color:#9aa3b2}
-  .task.done .badge-status{opacity:.75}
-  .summary{display:flex;justify-content:space-between;color:var(--muted);font-size:var(--fs-sm);padding:6px 2px var(--pad)}
+      /* List tugas */
+      .list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: var(--gap);
+      }
+      .task {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        box-shadow: 0 8px 26px rgba(36, 24, 77, 0.08);
+        overflow: hidden;
+      }
+      .task__top {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding: 10px;
+      }
+      .check {
+        width: 26px;
+        height: 26px;
+        border-radius: 10px;
+        border: 2px solid var(--p600);
+        display: grid;
+        place-items: center;
+        background: #fff;
+      }
+      .check svg {
+        opacity: 0;
+        transition: opacity 0.12s;
+      }
+      .check.done {
+        background: var(--p600);
+      }
+      .check.done svg {
+        opacity: 1;
+      }
+      .title {
+        font-weight: 800;
+      }
+      .badges {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-self: end;
+      }
+      .badge-status {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: var(--p200);
+        border: 1px solid #ddd3ff;
+        color: #3a2d6d;
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .badge-status.done {
+        background: #e6fbf5;
+        border-color: #bff0e4;
+        color: #0f9d76;
+      }
+      /* Chart di dalam detail tugas */
+      .detail-chart-wrap {
+        margin-top: 14px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+      }
+      .detail-chart-title {
+        font-weight: 800;
+        font-size: var(--fs-sm);
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+      /* Menggunakan ulang .pie-wrap tapi membuat pie-nya lebih kecil */
+      .detail-pie {
+        width: 56px;
+        height: 56px;
+      }
+      .detail-pie::after {
+        inset: 7px; /* Lubang donat lebih kecil */
+      }
+      .detail {
+        display: none;
+        border-top: 1px dashed var(--border);
+        padding: 10px;
+        color: var(--muted);
+      }
+      .task.expanded .detail {
+        display: block;
+      }
+      .task.done .title {
+        text-decoration: line-through;
+        color: #9aa3b2;
+      }
+      .task.done .badge-status {
+        opacity: 0.75;
+      }
+      .summary {
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: var(--fs-sm);
+        padding: 6px 2px var(--pad);
+      }
 
-  @media (min-width:600px){
-    .drawer__body{grid-template-columns:1.2fr 1fr 1fr 1fr}
-    .stats{grid-template-columns:1.2fr 1fr} /* progress + pie | calendar */
-  }
-</style>
-</head>
-<body>
-<header class="nav">
-  <div class="nav__in">
-    <div class="logo" aria-hidden="true"></div>
-    <div class="brand">Cryptgen</div>
-    <div style="margin-left:auto">
-      <button id="toggleDrawer" class="iconbtn" aria-label="Buka/tutup filter">☰</button>
-    </div>
-  </div>
-</header>
-
-<section class="hero">
-  <div class="container">
-    <h1>Informasi Tugas</h1>
-    <p class="sub">Data diambil dari Google Sheets (CSV publik). Tandai selesai tetap tersimpan lokal.</p>
-  </div>
-</section>
-
-<main class="container">
-  <!-- Drawer Filter -->
-  <section class="drawer" id="drawer" data-open="true" aria-label="Filter & Pencarian">
-    <div class="drawer__head">
-      <div class="drawer__title">Filter</div>
-      <button class="drawer__toggle" id="drawerBtn" aria-expanded="true">Tutup</button>
-    </div>
-    <div class="drawer__body">
-      <div class="field">
-        <label class="label" for="q">Pencarian</label>
-        <input id="q" class="input" type="text" placeholder="Cari judul/desk…">
-      </div>
-      <div class="field">
-        <label class="label" for="fCourse">Mata Kuliah</label>
-        <select id="fCourse" class="select">
-          <option value="all">Semua</option>
-        </select>
-      </div>
-      <div class="field">
-        <label class="label" for="fDue">Deadline</label>
-        <select id="fDue" class="select">
-          <option value="all">Semua</option>
-          <option value="today">Hari ini</option>
-          <option value="week">≤ 7 hari</option>
-          <option value="month">≤ 30 hari</option>
-          <option value="overdue">Terlambat</option>
-        </select>
-      </div>
-      <div class="field">
-        <label class="label" for="fStatus">Status</label>
-        <select id="fStatus" class="select">
-          <option value="all">Semua</option>
-          <option value="open">Belum selesai</option>
-          <option value="done">Selesai</option>
-        </select>
-      </div>
-      <div class="drawer__actions">
-        <button id="reset" class="btn btn-ghost">Reset</button>
-        <button id="sort" class="btn btn-primary">Urutkan Deadline</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Statistik -->
-  <section class="stats">
-    <!-- Progress + Pie -->
-    <div class="card">
-      <div class="stat-title">Progress Tugas</div>
-      <div class="stat-row" style="margin-bottom:8px">
-        <div id="progressText" style="min-width:max-content;font-weight:800">0/0 selesai</div>
-        <div class="progress" aria-label="Progress">
-          <span id="progressBar" style="width:0%"></span>
+      @media (min-width: 600px) {
+        .drawer__body {
+          grid-template-columns: 1.2fr 1fr 1fr 1fr;
+        }
+        .stats {
+          grid-template-columns: 1.2fr 1fr;
+        } /* progress + pie | calendar */
+      }
+    </style>
+  </head>
+  <body>
+    <header class="nav">
+      <div class="nav__in">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="brand">Cryptgen</div>
+        <div style="margin-left: auto">
+          <button
+            id="toggleDrawer"
+            class="iconbtn"
+            aria-label="Buka/tutup filter"
+          >
+            ☰
+          </button>
         </div>
       </div>
+    </header>
 
-      <div class="stat-title" style="margin-top:6px">Distribusi Status</div>
-      <div class="pie-wrap">
-        <div class="pie" id="pieChart" aria-label="Distribusi status tugas">
-          <div class="pie-label" id="pieLabel">0/0</div>
-        </div>
-        <div class="legend">
-          <span><i class="dot c-open"></i>Belum</span>
-          <span><i class="dot c-done"></i>Selesai</span>
-        </div>
+    <section class="hero">
+      <div class="container">
+        <h1>Informasi Tugas</h1>
+        <p class="sub">
+          Data diambil dari Google Sheets (CSV publik). Tandai selesai tetap
+          tersimpan lokal.
+        </p>
       </div>
-    </div>
+    </section>
 
-    <!-- Kalender Mini -->
-    <div class="card cal">
-      <div class="cal-head">
-        <div class="stat-title">Kalender</div>
-        <div class="cal-nav">
-          <button id="prevMonth" class="cal-btn" aria-label="Bulan sebelumnya">‹</button>
-          <button id="nextMonth" class="cal-btn" aria-label="Bulan berikutnya">›</button>
+    <main class="container">
+      <!-- Drawer Filter -->
+      <section
+        class="drawer"
+        id="drawer"
+        data-open="true"
+        aria-label="Filter & Pencarian"
+      >
+        <div class="drawer__head">
+          <div class="drawer__title">Filter</div>
+          <button class="drawer__toggle" id="drawerBtn" aria-expanded="true">
+            Tutup
+          </button>
         </div>
+        <div class="drawer__body">
+          <div class="field">
+            <label class="label" for="q">Pencarian</label>
+            <input
+              id="q"
+              class="input"
+              type="text"
+              placeholder="Cari judul/desk…"
+            />
+          </div>
+          <div class="field">
+            <label class="label" for="fCourse">Mata Kuliah</label>
+            <select id="fCourse" class="select">
+              <option value="all">Semua</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label" for="fDue">Deadline</label>
+            <select id="fDue" class="select">
+              <option value="all">Semua</option>
+              <option value="today">Hari ini</option>
+              <option value="week">≤ 7 hari</option>
+              <option value="month">≤ 30 hari</option>
+              <option value="overdue">Terlambat</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label" for="fStatus">Status</label>
+            <select id="fStatus" class="select">
+              <option value="all">Semua</option>
+              <option value="open">Belum selesai</option>
+              <option value="done">Selesai</option>
+            </select>
+          </div>
+          <div class="drawer__actions">
+            <button id="reset" class="btn btn-ghost">Reset</button>
+            <button id="sort" class="btn btn-primary">Urutkan Deadline</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Statistik -->
+      <section class="stats">
+        <!-- Progress + Pie -->
+        <div class="card">
+          <div class="stat-title">Progress Tugas</div>
+          <div class="stat-row" style="margin-bottom: 8px">
+            <div
+              id="progressText"
+              style="min-width: max-content; font-weight: 800"
+            >
+              0/0 selesai
+            </div>
+            <div class="progress" aria-label="Progress">
+              <span id="progressBar" style="width: 0%"></span>
+            </div>
+          </div>
+
+          <div class="stat-title" style="margin-top: 6px">
+            Distribusi Status
+          </div>
+          <div class="pie-wrap">
+            <div class="pie" id="pieChart" aria-label="Distribusi status tugas">
+              <div class="pie-label" id="pieLabel">0/0</div>
+            </div>
+            <div class="legend">
+              <span><i class="dot c-open"></i>Belum</span>
+              <span><i class="dot c-done"></i>Selesai</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kalender Mini -->
+        <div class="card cal">
+          <div class="cal-head">
+            <div class="stat-title">Kalender</div>
+            <div class="cal-nav">
+              <button
+                id="prevMonth"
+                class="cal-btn"
+                aria-label="Bulan sebelumnya"
+              >
+                ‹
+              </button>
+              <button
+                id="nextMonth"
+                class="cal-btn"
+                aria-label="Bulan berikutnya"
+              >
+                ›
+              </button>
+            </div>
+          </div>
+          <div id="calLabel" class="sub" style="margin-bottom: 6px"></div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div class="cal-note">
+            Ketuk tanggal untuk memfilter daftar tugas pada tanggal tersebut.
+          </div>
+        </div>
+      </section>
+
+      <!-- List -->
+      <section id="list" class="list" aria-live="polite"></section>
+      <div id="sum" class="summary">
+        <span>0 tugas</span><span>0 selesai</span>
       </div>
-      <div id="calLabel" class="sub" style="margin-bottom:6px"></div>
-      <div class="cal-grid" id="calGrid"></div>
-      <div class="cal-note">Ketuk tanggal untuk memfilter daftar tugas pada tanggal tersebut.</div>
-    </div>
-  </section>
+    </main>
 
-  <!-- List -->
-  <section id="list" class="list" aria-live="polite"></section>
-  <div id="sum" class="summary"><span>0 tugas</span><span>0 selesai</span></div>
-</main>
+    <script>
+      /* ================== CSV CONFIG ================== */
+      // GANTI dengan URL CSV publik dari Google Sheets / Excel Online
+      const CSV_URL =
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vQxQ2anB5mpS8exlzewchsK0fX1_AYvb9LS3AHR0Ldxak20xuLxkGz9fQHwSc0qvUMGUwPI1HqUmt29/pub?gid=1588858995&single=true&output=csv";
+      const SCRIPT_URL =
+        "https://script.google.com/macros/s/AKfycbw3sSlGGohR9JYoN3qODtwttRrMwkmhmaexOrX93AhgGtQGIPLaKmjAKq-zFB9255aJNg/exec";
 
-<script>
-  /* ================== CSV CONFIG ================== */
-  // GANTI dengan URL CSV publik dari Google Sheets / Excel Online
-  const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQxQ2anB5mpS8exlzewchsK0fX1_AYvb9LS3AHR0Ldxak20xuLxkGz9fQHwSc0qvUMGUwPI1HqUmt29/pub?gid=1588858995&single=true&output=csv';
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3sSlGGohR9JYoN3qODtwttRrMwkmhmaexOrX93AhgGtQGIPLaKmjAKq-zFB9255aJNg/exec';
+      /* ================== STATE ================== */
+      let tasks = []; // akan diisi dari CSV
+      const LS_KEY = "cryptgen::tasksDone";
 
-  /* ================== STATE ================== */
-  let tasks = []; // akan diisi dari CSV
-  const LS_KEY='cryptgen::tasksDone';
+      /* ================== CSV LOADER ================== */
+      /* ================== CSV LOADER ================== */
+      function parseCSV(text) {
+        // Fungsi untuk menghapus tanda kutip di awal dan akhir string
+        // Tetap berguna untuk header dan pembersihan akhir
+        const clean = (str) => (str || "").trim().replace(/^"|"$/g, "");
 
-  /* ================== CSV LOADER ================== */
-  function parseCSV(text) {
-  // Fungsi untuk menghapus tanda kutip di awal dan akhir string
-  const clean = (str) => (str || '').trim().replace(/^"|"$/g, '');
+        const rows = text.split(/\r?\n/).filter((r) => r.trim() !== "");
+        if (rows.length === 0) return []; // Kembalikan array kosong jika tidak ada baris
 
-  const rows = text.split(/\r?\n/).filter(r => r.trim() !== '');
-  if (rows.length === 0) return []; // Kembalikan array kosong jika tidak ada baris
+        const head = rows.shift().split(",").map(clean);
 
-  const head = rows.shift().split(',').map(clean);
+        return rows.map((row) => {
+          const obj = {};
+          const values = [];
 
-  return rows.map(r => {
-    // Parser ini masih simpel, belum bisa menangani koma di dalam deskripsi
-    const cols = r.split(',').map(clean);
-    const obj = {};
-    head.forEach((h, i) => obj[h] = cols[i]);
-    return obj;
-  });
-}
-async function updateSheet(id, doneStatus) {
-  // Jangan lakukan apa-apa jika URL script tidak diatur
-  if (!SCRIPT_URL || SCRIPT_URL === 'URL_APLIKASI_WEB_YANG_ANDA_SALIN_TADI') {
-    console.log('SCRIPT_URL belum diatur. Update ke Sheet dilewati.');
-    return;
-  }
-  
-  try {
-    const response = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors', // Penting untuk beberapa skenario Google Script
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id: id, done: doneStatus }),
-    });
-    console.log('Update ke Sheet berhasil dikirim.');
-  } catch (error) {
-    console.error('Gagal mengirim update ke Sheet:', error);
-  }
-}
+          // Regex canggih untuk memisahkan kolom CSV
+          // Ini akan menangani kolom yang diapit tanda kutip (yang mungkin berisi koma)
+          // dan kolom yang tidak diapit tanda kutip.
+          const regex = /("([^"]*)"|([^,]*))(,|$)/g;
+          let match;
 
-  function mapRowToTask(row){
-    return {
-      id: String(row.id || ''),
-      title: row.title || '',
-      course: row.course || '',
-      due: (row.due || '').slice(0,10), // sarankan YYYY-MM-DD
-      time: row.time || '',
-      description: row.description || '',
-      done: String(row.done).toLowerCase()==='true' || row.done==='1'
-    };
-  }
+          // Loop melalui setiap baris untuk menemukan semua kolomnya
+          while ((match = regex.exec(row))) {
+            // Hasilnya bisa ada di grup 2 (jika diapit kutip) atau grup 3 (jika tidak)
+            let value = match[2] !== undefined ? match[2] : match[3];
+            values.push(value.trim());
+            if (match[4] === "") break; // Hentikan jika sudah di akhir baris
+          }
 
-  async function loadTasksFromCSV(){
-    try{
-      const res = await fetch(CSV_URL, {cache:'no-store'});
-      if(!res.ok) throw new Error('Fetch CSV gagal');
-      const text = await res.text();
-      tasks = parseCSV(text).map(mapRowToTask);
+          head.forEach((h, i) => {
+            obj[h] = values[i] || ""; // Pasangkan header dengan nilai yang sudah diparsing
+          });
 
-      // sinkron status done lokal
-      const doneState = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
-      tasks.forEach(t => t.done = doneState[t.id] ?? t.done);
+          return obj;
+        });
+      }
+      async function updateSheet(id, doneStatus) {
+        // Jangan lakukan apa-apa jika URL script tidak diatur
+        if (
+          !SCRIPT_URL ||
+          SCRIPT_URL === "URL_APLIKASI_WEB_YANG_ANDA_SALIN_TADI"
+        ) {
+          console.log("SCRIPT_URL belum diatur. Update ke Sheet dilewati.");
+          return;
+        }
 
-      initFilters(); // isi dropdown course
-      render();
-    }catch(err){
-      console.error(err);
-      document.getElementById('list').innerHTML =
-        '<div class="card">Gagal memuat data dari CSV. Periksa URL atau izin publikasi.</div>';
-    }
-  }
+        try {
+          const response = await fetch(SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors", // Penting untuk beberapa skenario Google Script
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id: id, done: doneStatus }),
+          });
+          console.log("Update ke Sheet berhasil dikirim.");
+        } catch (error) {
+          console.error("Gagal mengirim update ke Sheet:", error);
+        }
+      }
 
-  /* ================== UTIL & UI ================== */
-  const listEl = document.getElementById('list');
-  const qEl = document.getElementById('q');
-  const fCourse = document.getElementById('fCourse');
-  const fDue = document.getElementById('fDue');
-  const fStatus = document.getElementById('fStatus');
-  const sumEl = document.getElementById('sum');
-  const drawer = document.getElementById('drawer');
-  const drawerBtn = document.getElementById('drawerBtn');
-  const toggleDrawer = document.getElementById('toggleDrawer');
+      function mapRowToTask(row) {
+        return {
+          id: String(row.id || ""),
+          title: row.title || "",
+          course: row.course || "",
+          due: (row.due || "").slice(0, 10), // sarankan YYYY-MM-DD
+          time: row.time || "",
+          description: row.description || "",
+          done: String(row.done).toLowerCase() === "true" || row.done === "1",
+        };
+      }
 
-  // Stats
-  const progressText = document.getElementById('progressText');
-  const progressBar = document.getElementById('progressBar');
-  const pieChart  = document.getElementById('pieChart');
-  const pieLabel  = document.getElementById('pieLabel');
+      async function loadTasksFromCSV() {
+        try {
+          const res = await fetch(CSV_URL, { cache: "no-store" });
+          if (!res.ok) throw new Error("Fetch CSV gagal");
+          const text = await res.text();
+          tasks = parseCSV(text).map(mapRowToTask);
 
-  // Calendar
-  const calGrid = document.getElementById('calGrid');
-  const calLabel = document.getElementById('calLabel');
+          // sinkron status done lokal
+          const doneState = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+          tasks.forEach((t) => (t.done = doneState[t.id] ?? t.done));
 
-  let sortAsc = true;
-  let selectedDate = null; // YYYY-MM-DD filter via kalender
-  const today = new Date().toISOString().slice(0,10);
+          initFilters(); // isi dropdown course
+          render();
+        } catch (err) {
+          console.error(err);
+          document.getElementById("list").innerHTML =
+            '<div class="card">Gagal memuat data dari CSV. Periksa URL atau izin publikasi.</div>';
+        }
+      }
 
-  const daysBetween=(a,b)=>Math.round((new Date(b+'T00:00')-new Date(a+'T00:00'))/86400000);
-  const ddmmyyyy = x => { const [y,m,d]=x.split('-'); return `${d}/${m}/${y}`; };
+      /* ================== UTIL & UI ================== */
+      const listEl = document.getElementById("list");
+      const qEl = document.getElementById("q");
+      const fCourse = document.getElementById("fCourse");
+      const fDue = document.getElementById("fDue");
+      const fStatus = document.getElementById("fStatus");
+      const sumEl = document.getElementById("sum");
+      const drawer = document.getElementById("drawer");
+      const drawerBtn = document.getElementById("drawerBtn");
+      const toggleDrawer = document.getElementById("toggleDrawer");
 
-  function initFilters(){
-    fCourse.innerHTML = '<option value="all">Semua</option>';
-    [...new Set(tasks.map(t=>t.course).filter(Boolean))].sort().forEach(c=>{
-      const o=document.createElement('option'); o.value=c; o.textContent=c; fCourse.appendChild(o);
-    });
-  }
+      // Stats
+      const progressText = document.getElementById("progressText");
+      const progressBar = document.getElementById("progressBar");
+      const pieChart = document.getElementById("pieChart");
+      const pieLabel = document.getElementById("pieLabel");
 
-  function setDrawer(open){
-    drawer.dataset.open = open ? "true" : "false";
-    drawerBtn.textContent = open ? "Tutup" : "Buka";
-    drawerBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  }
-  drawerBtn.addEventListener('click', ()=> setDrawer(drawer.dataset.open!=="true"));
-  toggleDrawer.addEventListener('click', ()=> setDrawer(drawer.dataset.open!=="true"));
+      // Calendar
+      const calGrid = document.getElementById("calGrid");
+      const calLabel = document.getElementById("calLabel");
 
-  function matches(t){
-    if(selectedDate && t.due !== selectedDate) return false;
-    if(fCourse.value!=='all' && t.course!==fCourse.value) return false;
-    const diff=daysBetween(today,t.due);
-    if(fDue.value==='today'  && diff!==0) return false;
-    if(fDue.value==='week'   && !(diff>=0 && diff<=7)) return false;
-    if(fDue.value==='month'  && !(diff>=0 && diff<=30)) return false;
-    if(fDue.value==='overdue'&& !(diff<0 && !t.done)) return false;
-    if(fStatus.value==='open'&&  t.done) return false;
-    if(fStatus.value==='done'&& !t.done) return false;
-    const q=qEl.value.trim().toLowerCase();
-    if(q && !(t.title+' '+t.description+' '+t.course).toLowerCase().includes(q)) return false;
-    return true;
-  }
+      let sortAsc = true;
+      let selectedDate = null; // YYYY-MM-DD filter via kalender
+      const today = new Date().toISOString().slice(0, 10);
 
-  function updateStats(visible){
-    const total = tasks.length;
-    const done = tasks.filter(t=>t.done).length;
-    const pct = total ? Math.round((done/total)*100) : 0;
+      const daysBetween = (a, b) =>
+        Math.round(
+          (new Date(b + "T00:00") - new Date(a + "T00:00")) / 86400000
+        );
+      const ddmmyyyy = (x) => {
+        const [y, m, d] = x.split("-");
+        return `${d}/${m}/${y}`;
+      };
 
-    // progress
-    progressText.textContent = `${done}/${total} selesai`;
-    progressBar.style.width = pct + '%';
+      function initFilters() {
+        fCourse.innerHTML = '<option value="all">Semua</option>';
+        [...new Set(tasks.map((t) => t.course).filter(Boolean))]
+          .sort()
+          .forEach((c) => {
+            const o = document.createElement("option");
+            o.value = c;
+            o.textContent = c;
+            fCourse.appendChild(o);
+          });
+      }
 
-    // donut chart via conic-gradient
-    const donePct = total ? (done/total)*100 : 0;
-    pieChart.style.background = `conic-gradient(#0f9d76 0% ${donePct}%, #5b46b9 ${donePct}% 100%)`;
-    pieLabel.textContent = `${done}/${total}`;
+      function setDrawer(open) {
+        drawer.dataset.open = open ? "true" : "false";
+        drawerBtn.textContent = open ? "Tutup" : "Buka";
+        drawerBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      }
+      drawerBtn.addEventListener("click", () =>
+        setDrawer(drawer.dataset.open !== "true")
+      );
+      toggleDrawer.addEventListener("click", () =>
+        setDrawer(drawer.dataset.open !== "true")
+      );
 
-    // ringkasan bawah
-    const shown = visible.length;
-    sumEl.children[0].textContent = `${shown}/${total} tugas tampil${selectedDate?` (tgl ${ddmmyyyy(selectedDate)})`:''}`;
-    sumEl.children[1].textContent = `${done} selesai`;
-  }
+      function matches(t) {
+        if (selectedDate && t.due !== selectedDate) return false;
+        if (fCourse.value !== "all" && t.course !== fCourse.value) return false;
+        const diff = daysBetween(today, t.due);
+        if (fDue.value === "today" && diff !== 0) return false;
+        if (fDue.value === "week" && !(diff >= 0 && diff <= 7)) return false;
+        if (fDue.value === "month" && !(diff >= 0 && diff <= 30)) return false;
+        if (fDue.value === "overdue" && !(diff < 0 && !t.done)) return false;
+        if (fStatus.value === "open" && t.done) return false;
+        if (fStatus.value === "done" && !t.done) return false;
+        const q = qEl.value.trim().toLowerCase();
+        if (
+          q &&
+          !(t.title + " " + t.description + " " + t.course)
+            .toLowerCase()
+            .includes(q)
+        )
+          return false;
+        return true;
+      }
 
-  function render(){
-    tasks.sort((a,b)=>{
-      const da=new Date(a.due+'T'+(a.time||'00:00'));
-      const db=new Date(b.due+'T'+(b.time||'00:00'));
-      return sortAsc? (da-db):(db-da);
-    });
+      function updateStats(visible) {
+        const total = tasks.length;
+        const done = tasks.filter((t) => t.done).length;
+        const pct = total ? Math.round((done / total) * 100) : 0;
 
-    listEl.innerHTML='';
-    const visible=tasks.filter(matches);
+        // progress
+        progressText.textContent = `${done}/${total} selesai`;
+        progressBar.style.width = pct + "%";
 
-    visible.forEach(t=>{
-      const card=document.createElement('article'); card.className='task'+(t.done?' done':'');
-      const top=document.createElement('div'); top.className='task__top';
+        // donut chart via conic-gradient
+        const donePct = total ? (done / total) * 100 : 0;
+        pieChart.style.background = `conic-gradient(#0f9d76 0% ${donePct}%, #5b46b9 ${donePct}% 100%)`;
+        pieLabel.textContent = `${done}/${total}`;
 
-      const check=document.createElement('button'); check.className='check'+(t.done?' done':''); check.setAttribute('aria-label','Tandai selesai');
-      check.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M20.285 2L9 13.285 3.714 8 2 9.714l7 7L22 3.715z"/></svg>`;
-      check.addEventListener('click', (e)=>{
-        e.stopPropagation();
-        t.done=!t.done;
-        const state = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
-        state[t.id]=t.done;
-        localStorage.setItem(LS_KEY, JSON.stringify(state));
-        updateSheet(t.id, t.done);
-        render();
-      });
+        // ringkasan bawah
+        const shown = visible.length;
+        sumEl.children[0].textContent = `${shown}/${total} tugas tampil${
+          selectedDate ? ` (tgl ${ddmmyyyy(selectedDate)})` : ""
+        }`;
+        sumEl.children[1].textContent = `${done} selesai`;
+      }
 
-      const title=document.createElement('div'); title.className='title'; title.textContent=t.title||'(Tanpa judul)';
+      function render() {
+        tasks.sort((a, b) => {
+          const da = new Date(a.due + "T" + (a.time || "00:00"));
+          const db = new Date(b.due + "T" + (b.time || "00:00"));
+          return sortAsc ? da - db : db - da;
+        });
 
-      const badges=document.createElement('div'); badges.className='badges';
-      badges.innerHTML=`
-        <span class="badge-status">${t.course||'-'}</span>
-        <span class="badge-status">🗓 ${t.due?ddmmyyyy(t.due):'-'} ${t.time?('• '+t.time):''}</span>
-        <span class="badge-status ${t.done?'done':''}">${t.done?'Selesai':'Belum'}</span>
+        listEl.innerHTML = "";
+        const visible = tasks.filter(matches);
+
+        visible.forEach((t) => {
+          const card = document.createElement("article");
+          card.className = "task" + (t.done ? " done" : "");
+          const top = document.createElement("div");
+          top.className = "task__top";
+
+          const check = document.createElement("button");
+          check.className = "check" + (t.done ? " done" : "");
+          check.setAttribute("aria-label", "Tandai selesai");
+          check.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M20.285 2L9 13.285 3.714 8 2 9.714l7 7L22 3.715z"/></svg>`;
+          check.addEventListener("click", (e) => {
+            e.stopPropagation();
+            t.done = !t.done;
+            const state = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+            state[t.id] = t.done;
+            localStorage.setItem(LS_KEY, JSON.stringify(state));
+            updateSheet(t.id, t.done);
+            render();
+          });
+
+          const title = document.createElement("div");
+          title.className = "title";
+          title.textContent = t.title || "(Tanpa judul)";
+
+          const badges = document.createElement("div");
+          badges.className = "badges";
+          badges.innerHTML = `
+        <span class="badge-status">${t.course || "-"}</span>
+        <span class="badge-status">🗓 ${t.due ? ddmmyyyy(t.due) : "-"} ${
+            t.time ? "• " + t.time : ""
+          }</span>
+        <span class="badge-status ${t.done ? "done" : ""}">${
+            t.done ? "Selesai" : "Belum"
+          }</span>
       `;
 
-      top.append(check,title,badges);
+          top.append(check, title, badges);
 
-      const detail=document.createElement('div'); detail.className='detail';
-      const r=isNaN(new Date(t.due))? null : Math.round((new Date(t.due)-new Date(today))/86400000);
-      const badge = (r===null) ? '' : (r<0 ? '❗Terlambat' : r===0 ? '⏰ Hari ini' : `⏳ ${r} hari lagi`);
-      detail.innerHTML=`<div style="margin-bottom:6px;font-weight:800;color:#6F61C0">${badge}</div>${t.description||''}`;
-      top.addEventListener('click', ()=> card.classList.toggle('expanded'));
+          const detail = document.createElement("div");
+          detail.className = "detail";
+          const r = isNaN(new Date(t.due))
+            ? null
+            : Math.round((new Date(t.due) - new Date(today)) / 86400000);
+          const badge =
+            r === null
+              ? ""
+              : r < 0
+              ? "❗Terlambat"
+              : r === 0
+              ? "⏰ Hari ini"
+              : `⏳ ${r} hari lagi`;
+          detail.innerHTML = `<div style="margin-bottom:6px;font-weight:800;color:#6F61C0">${badge}</div>${
+            t.description || ""
+          }`;
+          top.addEventListener("click", () =>
+            card.classList.toggle("expanded")
+          );
 
-      card.append(top,detail);
-      listEl.appendChild(card);
-    });
+          card.append(top, detail);
+          listEl.appendChild(card);
+        });
 
-    updateStats(visible);
-    renderCalendar(); // refresh badge jumlah per hari & seleksi
-  }
-
-  /* ===== Calendar ===== */
-  let calMonth = new Date(); // bulan yang ditampilkan
-  calMonth.setDate(1);
-
-  function monthLabel(d){
-    return d.toLocaleDateString('id-ID',{month:'long', year:'numeric'});
-  }
-  function daysInMonth(d){
-    const y=d.getFullYear(), m=d.getMonth();
-    return new Date(y, m+1, 0).getDate();
-  }
-
-  function renderCalendar(){
-    const dow = ['M','S','S','R','K','J','S']; // Senin-awal
-    calGrid.innerHTML='';
-    dow.forEach(ch=>{
-      const h=document.createElement('div'); h.className='dow'; h.textContent=ch; calGrid.appendChild(h);
-    });
-
-    const y=calMonth.getFullYear(), m=calMonth.getMonth();
-    calLabel.textContent = monthLabel(calMonth);
-
-    const first = new Date(y,m,1);
-    let startIdx = (first.getDay()+6)%7; // 0=Senin
-    const total = daysInMonth(calMonth);
-
-    // hitung jumlah tugas per hari (bulan aktif)
-    const map = {};
-    tasks.forEach(t=>{
-      const dt=new Date(t.due);
-      if(!isNaN(dt) && dt.getMonth()===m && dt.getFullYear()===y){
-        const day=dt.getDate();
-        map[day]=(map[day]||0)+1;
+        updateStats(visible);
+        renderCalendar(); // refresh badge jumlah per hari & seleksi
       }
-    });
 
-    for(let i=0;i<startIdx;i++){
-      const cell=document.createElement('div'); cell.className='day mute'; calGrid.appendChild(cell);
-    }
+      /* ===== Calendar ===== */
+      let calMonth = new Date(); // bulan yang ditampilkan
+      calMonth.setDate(1);
 
-    for(let d=1; d<=total; d++){
-      const cell=document.createElement('button'); cell.className='day';
-      const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      cell.textContent=d;
-      if(map[d]){ const b=document.createElement('span'); b.className='badge'; b.textContent=map[d]; cell.appendChild(b); }
-      if(selectedDate===dateStr) cell.classList.add('selected');
+      function monthLabel(d) {
+        return d.toLocaleDateString("id-ID", {
+          month: "long",
+          year: "numeric",
+        });
+      }
+      function daysInMonth(d) {
+        const y = d.getFullYear(),
+          m = d.getMonth();
+        return new Date(y, m + 1, 0).getDate();
+      }
 
-      cell.addEventListener('click', ()=>{
-        selectedDate = (selectedDate===dateStr) ? null : dateStr;
-        render(); // akan memanggil renderCalendar lagi dan mewarnai seleksi
+      function renderCalendar() {
+        const dow = ["M", "S", "S", "R", "K", "J", "S"]; // Senin-awal
+        calGrid.innerHTML = "";
+        dow.forEach((ch) => {
+          const h = document.createElement("div");
+          h.className = "dow";
+          h.textContent = ch;
+          calGrid.appendChild(h);
+        });
+
+        const y = calMonth.getFullYear(),
+          m = calMonth.getMonth();
+        calLabel.textContent = monthLabel(calMonth);
+
+        const first = new Date(y, m, 1);
+        let startIdx = (first.getDay() + 6) % 7; // 0=Senin
+        const total = daysInMonth(calMonth);
+
+        // hitung jumlah tugas per hari (bulan aktif)
+        const map = {};
+        tasks.forEach((t) => {
+          const dt = new Date(t.due);
+          if (!isNaN(dt) && dt.getMonth() === m && dt.getFullYear() === y) {
+            const day = dt.getDate();
+            map[day] = (map[day] || 0) + 1;
+          }
+        });
+
+        for (let i = 0; i < startIdx; i++) {
+          const cell = document.createElement("div");
+          cell.className = "day mute";
+          calGrid.appendChild(cell);
+        }
+
+        for (let d = 1; d <= total; d++) {
+          const cell = document.createElement("button");
+          cell.className = "day";
+          const dateStr = `${y}-${String(m + 1).padStart(2, "0")}-${String(
+            d
+          ).padStart(2, "0")}`;
+          cell.textContent = d;
+          if (map[d]) {
+            const b = document.createElement("span");
+            b.className = "badge";
+            b.textContent = map[d];
+            cell.appendChild(b);
+          }
+          if (selectedDate === dateStr) cell.classList.add("selected");
+
+          cell.addEventListener("click", () => {
+            selectedDate = selectedDate === dateStr ? null : dateStr;
+            render(); // akan memanggil renderCalendar lagi dan mewarnai seleksi
+          });
+
+          calGrid.appendChild(cell);
+        }
+      }
+
+      /* ===== Events ===== */
+      document.getElementById("reset").addEventListener("click", () => {
+        qEl.value = "";
+        fCourse.value = "all";
+        fDue.value = "all";
+        fStatus.value = "all";
+        selectedDate = null;
+        render();
+      });
+      document.getElementById("sort").addEventListener("click", () => {
+        sortAsc = !sortAsc;
+        render();
+      });
+      [fCourse, fDue, fStatus].forEach((el) =>
+        el.addEventListener("change", render)
+      );
+      let tmr = null;
+      qEl.addEventListener("input", () => {
+        clearTimeout(tmr);
+        tmr = setTimeout(render, 180);
       });
 
-      calGrid.appendChild(cell);
-    }
-  }
+      // Init
+      const mq = window.matchMedia("(min-width:600px)");
+      const autoDrawer = (e) => setDrawer(e.matches);
+      autoDrawer(mq);
+      mq.addEventListener?.("change", autoDrawer);
 
-  /* ===== Events ===== */
-  document.getElementById('reset').addEventListener('click', ()=>{
-    qEl.value=''; fCourse.value='all'; fDue.value='all'; fStatus.value='all'; selectedDate=null; render();
-  });
-  document.getElementById('sort').addEventListener('click', ()=>{ sortAsc=!sortAsc; render(); });
-  [fCourse,fDue,fStatus].forEach(el=>el.addEventListener('change', render));
-  let tmr=null; qEl.addEventListener('input', ()=>{ clearTimeout(tmr); tmr=setTimeout(render,180); });
-
-  // Init
-  const mq = window.matchMedia('(min-width:600px)');
-  const autoDrawer = e => setDrawer(e.matches);
-  autoDrawer(mq); mq.addEventListener?.('change', autoDrawer);
-
-  // Mulai load CSV saat halaman siap
-  document.addEventListener('DOMContentLoaded', loadTasksFromCSV);
-</script>
-</body>
+      // Mulai load CSV saat halaman siap
+      document.addEventListener("DOMContentLoaded", loadTasksFromCSV);
+    </script>
+  </body>
 </html>
